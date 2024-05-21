@@ -3,6 +3,9 @@
 \usepackage[unicode]{hyperref}
 \usepackage[onehalfspacing]{setspace}           % 1.5 distance between lines
 \usepackage{palatino}                           % font
+\usepackage{tabularx}
+\usepackage{tabu}
+\usepackage{longtable}[=v4.13]
 
 \bibliographystyle{plain}
 
@@ -28,19 +31,96 @@ PMail intends to provide a means of keeping track of physical mail (alternativel
 PMail provides the following features:
 \begin{enumerate}
     \item Authentication based on username and password, along with registration.
-    \item Maintain a list of receivers, along with information required on the envelope (address, full name, postal code) and other optional user-defined information.
-    \item Store a list of letters. Each letter is attached to a receiver (which keeps the same name even if they are actually a sender), can store metadata such as letter unique code, price, and other optional user-defined information.
+    \item Maintain a list of senders, along with information required on the envelope (address, full name, postal code) and other optional user-defined information.
+    \item Store a list of letters. Each letter is attached to a sender (which keeps the same name even if they are actually a receiver), can store metadata such as letter unique code, price, and other optional user-defined information.
 \end{enumerate}
+
+In particular, we tested the following aspects of PMail:
+\begin{itemize}
+    \item Authentication (login/logout with password);
+    \item Adding senders;
+    \item Adding letters;
+    \item Grouping of letters based on sender and type (sent/received).
+\end{itemize}
 
 \section{AC. IOs}
 
+We are employees at a software agency, specializing in web software, in particular business-to-business solutions customized for each customer. The company lead has a middle-school child which came up with the idea of an application to manage snail mail they were constantly sending to their friends. Having some leftover allocation in the company, and being in the middle of a transition from Angular to React company-wide, the company lead figured that this idea is worth investigating further as a learning project for his engineers.
+
+However, rather surprisingly, a specific market demand was identified for the application after development was complete. It seems the company's business partners can apply the software as an internal solution to manage mail going in and out of their headquarters.
+
+The company lead wants to capitulate on this newfound demand, but the application is currently in an unfit state. As such, our company decided to expand the development team on the so-called PMail project and bring in some new roles. In particular, we, Laurentiu and Alin, were hired as QA engineers, which now have the task of identifying an initial round of bugs and issues found with the product after its initial, internal, launch.
+
+Being an in-house and a training project, bugs are expected and the company lead insists on listing as many of them as possible. Additionally, the user interface and experience was an after-thought during development of PMail, so the company lead also wants to identify specific elements and flows of the application that might be a bit harder to grasp for a person unfamiliar with it, in the form of user experience hiccups.
+
 \section{Testing Mission}
+
+The initiative's goal is judging the app's fitness for releasing as a product of our company, and creating an improved version that can level up from the status of "learning project" to that of "marketable product". As QA engineers, we can only help with the first part.
+
+We need to perform an initial assessment of the application, drawing up test cases around usual user behavior and also potential edge situations, while also investigating common user experience anti-patterns.
 
 \section{Testing Strategy}
 
+The strategy is fairly straightforward, and is broken up in two parts.
+
+\begin{enumerate}
+    \item API Black-Box Testing
+
+          We are going to write integration tests for two functionalities of the application, that call APIs and test for proper responses and error messages.
+
+          We limit ourselves to the API initially since we consider it to be the backbone of any web application, thus being of significant importance testing-wise.
+
+          These tests try to uncover an assortment of types of bugs that relate to, but are not limited to, the following aspects: database connection, syntactically invalid data, semantically invalid data, incorrect references.
+
+    \item User Experience: Exploratory Testing
+
+          We are going to fiddle with the application's frontend, manually and in an exploratory manner, to try to uncover as many design anti-patterns as we can.
+
+          We're going to make a list of behaviors that we identify as potential issues and hand it over to the company lead, which will decide what, if any, corrective actions are going to be taken for each of them.
+\end{enumerate}
+
 \section{Selected Test Design Techniques}
 
+\begin{tabularx}{\textwidth}{|X|X|X|X|X|}
+    \hline
+    Part    & Test Strategy & Test Design Technique & Dimension Covered & Students and Features              \\
+    \hline
+    Part I  & [?]           & Black-Box Testing     & Risk              & Laurentiu Pricop (Authentication)  \\
+    \hline
+    Part I  & [?]           & Black-Box Testing     & Risk              & Alin Stanciu (Adding letters)      \\
+    \hline
+    Part II & [?]           & Exploratory Testing   & [?]               & Laurentiu Pricop (Authentication)  \\
+    \hline
+    Part II & [?]           & Exploratory Testing   & [?]               & Alin Stanciu (Adding destinations) \\
+    \hline
+\end{tabularx}
+
 \section{Test Design. Test implementation. Test execution. Test Report}
+
+\subsection{Test design}
+
+\begin{longtabu}{X[1] X[1]|X[1] X[2] X[2]}
+    \hline
+    Student & Feature & Test Design Method & Details & Input, Expected Output \\
+    \hline
+    \endhead
+    Laurentiu Pricop & Authenti\-cation & Postman Testing & Are invalid usernames accepted? Are incorrect passwords accepted? Are empty fields accepted? &
+    \par \textbf{In:} empty username
+    \par \textbf{ExpOut:} error
+    \par \textbf{In:} incorrect password
+    \par \textbf{ExpOut:} error
+    \par \textbf{In:} password too short
+    \par \textbf{ExpOut:} error
+    \\
+    \hline
+    Alin Stanciu & Authenti\-cation & Explora\-tory Testing & Are buttons readable and clear? Are CTA texts easily understandable? Are buttons responsive? &
+    No explicit test cases can be drawn out.
+    \\
+    \hline
+\end{longtabu}
+
+\subsection{Test implementation. Test execution}
+\subsection{Text reports}
 
 \section{Issue Reporting}
 
