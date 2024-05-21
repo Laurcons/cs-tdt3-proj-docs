@@ -1,16 +1,36 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
+\usepackage[unicode]{hyperref}
+\usepackage[onehalfspacing]{setspace}           % 1.5 distance between lines
+\usepackage{palatino}                           % font
+
+\bibliographystyle{plain}
 
 \title{TDT Project Documentation}
 \author{Stanciu Alin, Pricop Laurentiu}
 \date{Academic Year 2023-2024, Spring Semester}
 
 \begin{document}
+\pagenumbering{roman}
 
 \maketitle
 \tableofcontents
 
+\newpage
+\pagenumbering{arabic}
+
 \section{Application Details. Investigated features}
+
+The application we are testing is called Physical Mail Manager. The application is available for fiddling around with publicly \cite{PmailSite}, and its code is available on GitHub \cite{PmailGithub}. We will refer to the app as "PMail" from now on.
+
+PMail intends to provide a means of keeping track of physical mail (alternatively known as snail mail) that Laurentiu personally was sending and receiving. It allows configuring destinations and can assign to each letter a unique trackable code.
+
+PMail provides the following features:
+\begin{enumerate}
+    \item Authentication based on username and password, along with registration.
+    \item Maintain a list of receivers, along with information required on the envelope (address, full name, postal code) and other optional user-defined information.
+    \item Store a list of letters. Each letter is attached to a receiver (which keeps the same name even if they are actually a sender), can store metadata such as letter unique code, price, and other optional user-defined information.
+\end{enumerate}
 
 \section{AC. IOs}
 
@@ -25,5 +45,8 @@
 \section{Issue Reporting}
 
 \section{Conclusions. Lessons Learned}
+
+\newpage
+\bibliography{references}
 
 \end{document}
