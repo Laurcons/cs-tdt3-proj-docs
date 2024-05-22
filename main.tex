@@ -31,16 +31,16 @@ PMail intends to provide a means of keeping track of physical mail (alternativel
 PMail provides the following features:
 \begin{enumerate}
     \item Authentication based on username and password, along with registration.
-    \item Maintain a list of senders, along with information required on the envelope (address, full name, postal code) and other optional user-defined information.
-    \item Store a list of letters. Each letter is attached to a sender (which keeps the same name even if they are actually a receiver), can store metadata such as letter unique code, price, and other optional user-defined information.
+    \item Maintain a list of receivers, along with information required on the envelope (address, full name, postal code) and other optional user-defined information.
+    \item Store a list of letters. Each letter is attached to a receivers (which keeps the same name even if they are actually a sender), can store metadata such as letter unique code, price, and other optional user-defined information.
 \end{enumerate}
 
 In particular, we tested the following aspects of PMail:
 \begin{itemize}
     \item Authentication (login/logout with password);
-    \item Adding senders;
+    \item Adding receivers;
     \item Adding letters;
-    \item Grouping of letters based on sender and type (sent/received).
+    \item Grouping of letters based on receiver and type (sent/received).
 \end{itemize}
 
 \section{AC. IOs}
@@ -83,15 +83,15 @@ The strategy is fairly straightforward, and is broken up in two parts.
 
 \begin{tabularx}{\textwidth}{|X|X|X|X|X|}
     \hline
-    Part    & Test Strategy & Test Design Technique & Dimension Covered & Students and Features              \\
+    Part    & Test Strategy     & Test Design Technique  & Dimension Covered & Students and Features              \\
     \hline
-    Part I  & [?]           & Black-Box Testing     & Risk              & Laurentiu Pricop (Authentication)  \\
+    Part I  & Process-compliant & Beta Testing           & Coverage          & Laurentiu Pricop (Authentication)  \\
     \hline
-    Part I  & [?]           & Black-Box Testing     & Risk              & Alin Stanciu (Adding letters)      \\
+    Part I  & Reactive          & Boundary Testing       & Risk              & Alin Stanciu (Adding letters)      \\
     \hline
-    Part II & [?]           & Exploratory Testing   & [?]               & Laurentiu Pricop (Authentication)  \\
+    Part II & Reactive          & User Interface Testing & Risk              & Laurentiu Pricop (Authentication)  \\
     \hline
-    Part II & [?]           & Exploratory Testing   & [?]               & Alin Stanciu (Adding destinations) \\
+    Part II & Reactive          & User Interface Testing & Coverage          & Alin Stanciu (Adding destinations) \\
     \hline
 \end{tabularx}
 
@@ -101,26 +101,73 @@ The strategy is fairly straightforward, and is broken up in two parts.
 
 \begin{longtabu}{X[1] X[1]|X[1] X[2] X[2]}
     \hline
-    Student & Feature & Test Design Method & Details & Input, Expected Output \\
+    \textbf{Student} & \textbf{Feature} & \textbf{Test Design Technique} & \textbf{Details} & \textbf{Input, Expected Output} \\
+    &&&&\\
     \hline
     \endhead
-    Laurentiu Pricop & Authenti\-cation & Postman Testing & Are invalid usernames accepted? Are incorrect passwords accepted? Are empty fields accepted? &
-    \par \textbf{In:} empty username
-    \par \textbf{ExpOut:} error
-    \par \textbf{In:} incorrect password
-    \par \textbf{ExpOut:} error
-    \par \textbf{In:} password too short
+    Laurentiu Pricop & Authenti\-cation & Beta Testing & Can a normal user tinkering with the app with no intention to break it, break it? &
+    \par \textbf{In:} create account
+    \par \textbf{ExpOut:} account created
+    \par \textbf{In:} login with valid credentials
+    \par \textbf{ExpOut:} logged in
+    \par \textbf{In:} login with invalid credentials
     \par \textbf{ExpOut:} error
     \\
     \hline
-    Alin Stanciu & Authenti\-cation & Explora\-tory Testing & Are buttons readable and clear? Are CTA texts easily understandable? Are buttons responsive? &
+    Alin Stanciu & Adding letters & Boundary Testing & Is there a limit on the size of the address? Can letters be added in numerical fields? Is Unicode supported? Are SQL injections possible? &
+    \par \textbf{In:} empty address
+    \par \textbf{ExpOut:} error
+    \par \textbf{In:} address very long
+    \par \textbf{ExpOut:} error
+    \par \textbf{In:} unicode text
+    \par \textbf{ExpOut:} properly displayed
+    \par \textbf{In:} SQL-like text
+    \par \textbf{ExpOut:} properly displayed
+    \par \textbf{In:} HTML-like text
+    \par \textbf{ExpOut:} properly displayed
+    \\
+    \hline
+    Laurentiu Pricop & Authenti\-cation & User Interface Testing & Are buttons readable and clear? Are CTA texts easily understandable? Are buttons responsive? &
+    No explicit test cases can be drawn out.\\
+    \hline
+    Alin Stanciu & Adding receivers & User Interface Testing & Are buttons readable and clear? Are CTA texts easily understandable? Are buttons responsive? &
     No explicit test cases can be drawn out.
     \\
     \hline
 \end{longtabu}
 
 \subsection{Test implementation. Test execution}
-\subsection{Text reports}
+
+\subsection{Test reports}
+
+After running our devised tests, our tools (Postman and Testiny) can generate a series of test run reports. Screenshots of these reports are presented in Figures \ref{FigReportPostmanAuth}, \ref{FigReportPostmanLetters}, \ref{FigReportTestinyAuth}, \ref{FigReportTestinyReceivers}.
+
+Full testing reports for Testiny are available in the TDT Project repository, while the Postman collection with the written tests is available in the same place.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./figures/postman-auth.png}
+    \caption{Screenshot of run results for the Authentication feature, after running Beta Tests in Postman.}
+    \label{FigReportPostmanAuth}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./figures/postman-letters.png}
+    \caption{Screenshot of run results for the Add Letter feature, featuring Boundary Testing with certain edge cases tested.}
+    \label{FigReportPostmanLetters}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{./figures/testiny-auth.png}
+    \caption{Screenshot of test run results for the Authentication feature, after manually running User Interface tests using Testiny.}
+    \label{FigReportTestinyAuth}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{./figures/testiny-receivers.png}
+    \caption{Screenshot of test run results for the Add Receivers feature, after manually running User Interface tests using Testiny.}
+    \label{FigReportTestinyReceivers}
+\end{figure}
 
 \section{Issue Reporting}
 

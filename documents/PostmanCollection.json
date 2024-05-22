@@ -1,0 +1,615 @@
+{
+  "info": {
+    "_postman_id": "855fb2a6-1ca8-448d-8dcd-e0830092d436",
+    "name": "Physical Mail Manager",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "5574626"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "T: do not return user if not logged in",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check error response', () => {",
+                  "    pm.expect(status).to.eq('Forbidden');",
+                  "    pm.expect(json.status).to.eq('access-denied');",
+                  "    pm.expect(json.reason).to.eq('not-logged-in');",
+                  "})",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/api/user",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "user"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T: reject auth with invalid creds",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check error response', () => {",
+                  "    pm.expect(status).to.eq('Bad Request');",
+                  "    pm.expect(json.status).to.eq('user-not-found');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"asdf\",\n    \"password\": \"asdf\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/login",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T: reject register with duplicate creds",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check error response', () => {",
+                  "    pm.expect(status).to.eq('Bad Request');",
+                  "    pm.expect(json.status).to.eq('username-not-unique');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"a\",\n    \"password\": \"a\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/register",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T: register with new credentials works",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check success', () => {",
+                  "    pm.expect(status).to.eq('OK');",
+                  "    pm.expect(json.status).to.eq('success');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.variables.set('username', 'test-username-' + Date.now());",
+                  "pm.variables.set('password', '1234');"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/register",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T: login with above credentials works",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": ["// use username and password from prev request"],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "const cookies = pm.cookies;",
+                  "const phpsessid = cookies.get('PHPSESSID');",
+                  "",
+                  "pm.test('Check success', () => {",
+                  "    pm.expect(status).to.eq('OK');",
+                  "    pm.expect(json.status).to.eq('success');",
+                  "});",
+                  "pm.test('Check cookies for session token', () => {",
+                  "    pm.expect(phpsessid).is.not.empty;",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/login",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T: logout with above credentials works",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check success', () => {",
+                  "    pm.expect(status).to.eq('OK');",
+                  "    pm.expect(json.status).to.eq('success');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/api/logout",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "logout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Adding letters",
+      "item": [
+        {
+          "name": "log into test account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check success', () => {",
+                  "    pm.expect(status).to.eq('OK');",
+                  "    pm.expect(json.status).to.eq('success');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"a\",\n    \"password\": \"a\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/login",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create normal letter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "// save letter id",
+                  "pm.expect(json.letter._id).to.be.above(0);",
+                  "pm.variables.set('letterId', json.letter._id);",
+                  "",
+                  "pm.test('Check success', () => {",
+                  "    pm.expect(status).to.eq('OK');",
+                  "    pm.expect(json.status).to.eq('success');",
+                  "});",
+                  "pm.test('Check type and destination', () => {",
+                  "    pm.expect(json.letter.type).to.eq('incoming');",
+                  "    pm.expect(json.letter.userId).to.eq(8);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "type",
+                  "value": "incoming",
+                  "type": "text"
+                },
+                {
+                  "key": "destinationId",
+                  "value": "8",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/letter",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "letter"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "set normal code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check success', () => {",
+                  "    pm.expect(status).to.eq('OK');",
+                  "    pm.expect(json.status).to.eq('success');",
+                  "});",
+                  "pm.test('Check type and destination', () => {",
+                  "    pm.expect(json.letter.type).to.eq('incoming');",
+                  "    pm.expect(json.letter.userId).to.eq(8);",
+                  "});",
+                  "pm.test('Check new code', () => {",
+                  "    pm.expect(json.letter.code).to.eq('Normal Code');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "_method",
+                  "value": "patch",
+                  "type": "text"
+                },
+                {
+                  "key": "code",
+                  "value": "Normal Code",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/letter/{{letterId}}",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "letter", "{{letterId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "set very long code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check success', () => {",
+                  "    pm.expect(status).to.eq('OK');",
+                  "    pm.expect(json.status).to.eq('success');",
+                  "});",
+                  "pm.test('Check type and destination', () => {",
+                  "    pm.expect(json.letter.type).to.eq('incoming');",
+                  "    pm.expect(json.letter.userId).to.eq(8);",
+                  "});",
+                  "pm.test('Check new code', () => {",
+                  "    pm.expect(json.letter.code).to.eq(pm.variables.get('veryLongCode'));",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.variables.set('veryLongCode', Array(20).fill('').join('Very Long Code'));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "_method",
+                  "value": "patch",
+                  "type": "text"
+                },
+                {
+                  "key": "code",
+                  "value": "{{veryLongCode}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/letter/{{letterId}}",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "letter", "{{letterId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "set text in numerical field",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check failure', () => {",
+                  "    pm.expect(status).to.eq('Bad Request');",
+                  "    pm.expect(json.status).to.eq('invalid-request');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.variables.set('veryLongCode', Array(20).fill('').join('Very Long Code'));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "_method",
+                  "value": "patch",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "Is Text Ok?",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/letter/{{letterId}}",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "letter", "{{letterId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "set SQL Injection text",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const { status } = pm.response;",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Check success', () => {",
+                  "    pm.expect(status).to.eq('OK');",
+                  "    pm.expect(json.status).to.eq('success');",
+                  "});",
+                  "pm.test('Check type and destination', () => {",
+                  "    pm.expect(json.letter.type).to.eq('incoming');",
+                  "    pm.expect(json.letter.userId).to.eq(8);",
+                  "});",
+                  "pm.test('Check new value, no injection', () => {",
+                  "    pm.expect(json.letter.handwritten).to.eq('\\'; DROP TABLE users; --');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.variables.set('veryLongCode', Array(20).fill('').join('Very Long Code'));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "_method",
+                  "value": "patch",
+                  "type": "text"
+                },
+                {
+                  "key": "handwritten",
+                  "value": "'; DROP TABLE users; --",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{apiUrl}}/api/letter/{{letterId}}",
+              "host": ["{{apiUrl}}"],
+              "path": ["api", "letter", "{{letterId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "letterId",
+      "value": "13"
+    }
+  ]
+}
