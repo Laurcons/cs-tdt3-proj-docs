@@ -138,11 +138,15 @@ The strategy is fairly straightforward, and is broken up in two parts.
 
 \subsection{Test implementation. Test execution}
 
+For our Beta and Boundary Testing, we devised a series of Postman integration tests which test for a variety of cases similar to the ones detailed in the section above. You can find the Postman collection on the project repository \cite{PostmanCollection}.
+
+For our User Interface testing, we devised a series of test cases using the platform Testiny, which we then manually executed against the tested features. You can find the collection of test cases in an Excel sheet in the project repository \cite{TestinyTestCases}.
+
 \subsection{Test reports}
 
 After running our devised tests, our tools (Postman and Testiny) can generate a series of test run reports. Screenshots of these reports are presented in Figures \ref{FigReportPostmanAuth}, \ref{FigReportPostmanLetters}, \ref{FigReportTestinyAuth}, \ref{FigReportTestinyReceivers}.
 
-Full testing reports for Testiny are available in the TDT Project repository, while the Postman collection with the written tests is available in the same place.
+Full testing reports for Testiny are available in the TDT Project repository \cite{TestinyAuthReport} \cite{TestinyReceiversReport}, while the Postman collection with the written tests is available in the same place \cite{PostmanCollection}.
 
 \begin{figure}[htbp]
     \centering
@@ -171,7 +175,18 @@ Full testing reports for Testiny are available in the TDT Project repository, wh
 
 \section{Issue Reporting}
 
+We compiled a RIMGEA breakdown of an User Interface issue, which is available in the project repository \cite{RIMGEAReport}.
+
 \section{Conclusions. Lessons Learned}
+
+Having run thorough tests of the application, using a variety of methods, techniques and scopes, we can characterize the application in the following way:
+
+\begin{enumerate}
+    \item The API is stable and no noticeable functionality bugs have been noticed. The only thing that can be improved is the acceptance of data types, since fields that should numeric accept any kind of strings.
+    \item The UI is stable and functional, although little attention was paid to the user experience. A number of issues were identified across the application, which range from confusing movement of elements, to loss of data when navigating from one screen to another.
+\end{enumerate}
+
+The QA team therefore concludes that the product is NOT yet ready for launch to business-to-business clients, and needs further polishing before a release is to take place.
 
 \newpage
 \bibliography{references}
